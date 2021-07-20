@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import OpenWeatherIcon from '../../components/OpenWeatherIcon';
+import WeatherCard from '../../components/WeatherCard';
+import WeatherSearch from '../../components/WeatherSearch';
 
 export default class MainPage extends Component {
     constructor() {
@@ -40,9 +41,8 @@ export default class MainPage extends Component {
 
         return(
             <>
-                <OpenWeatherIcon iconCode={weather && weather.length > 0 && weather[0].icon}/>
-                <h3>{name && name} County</h3>
-                <h1>{main && main.temp}{'\u00b0'}</h1>
+                <WeatherSearch />
+                <WeatherCard iconCode={weather && weather.length > 0 && weather[0].icon} main={main && main} weather={weather && weather} name={name && name}/>
             </>
         )
     }
