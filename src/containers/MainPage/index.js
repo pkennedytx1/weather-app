@@ -1,49 +1,49 @@
-import React, {Component} from 'react';
-import axios from 'axios';
+import React, { useContext, useEffect } from 'react';
 import WeatherCard from '../../components/WeatherCard';
 import WeatherSearch from '../../components/WeatherSearch';
+import { store } from '../../store';
+import { getWeatherByCoordinates } from '../../utils/fetchCityWeather'
 
-export default class MainPage extends Component {
-    constructor() {
-        super()
-        this.state={
-            weatherData: {}
+
+const MainPage = (props) => {
+    const { state, dispatch } = useContext(store);
+
+    // Mimicing componentDidMount
+    useEffect(() => {
+        getCurrentLocation()
+    }, []);
+
+    // Listening for defaultCoordinates to be updated
+    useEffect(() => {
+        async function getByCoord() {
+            const response = await getWeatherByCoordinates(state.defaultCoordinates);
+            dispatch({ type: "SET_WEATHER_DATA", payload: response});
+        }
+        getByCoord();
+    }, [state.defaultCoordinates, dispatch])
+
+    // function to grab coordinates
+    const getCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                dispatch({
+                    type: "SET_COORDINATES",
+                    payload: {
+                        lat: position.coords.latitude,
+                        long: position.coords.longitude,
+                    }
+                })
+            });
         }
     }
 
-    componentDidMount() {
-        const options = {
-            method: 'GET',
-            url: 'https://community-open-weather-map.p.rapidapi.com/weather',
-            params: {lat: this.props.coordinates.lat, lon: this.props.coordinates.long, units: 'imperial'},
-            headers: {
-                'x-rapidapi-key': process.env.REACT_APP_OPEN_WEATHER_API_KEY,
-                'x-rapidapi-host': process.env.REACT_APP_OPEN_WEATHER_API_HOST,
-            }
-        };
-
-        // Reminder to talk about binding
-        axios.request(options).then((response) => {
-            this.setState({
-                weatherData: response.data
-            })
-        }).catch(function (error) {
-            console.error(error);
-        });
-    }
-
-    render() {
-        const { weatherData: {
-            main,
-            name,
-            weather
-        }} = this.state;
-
-        return(
-            <>
-                <WeatherSearch />
-                <WeatherCard iconCode={weather && weather.length > 0 && weather[0].icon} main={main && main} weather={weather && weather} name={name && name}/>
-            </>
-        )
-    }
+    return(
+        <>
+            {state.weatherData && <WeatherCard />}
+            <WeatherSearch />
+        </>
+    )
+    
 }
+
+export default MainPage;

@@ -1,42 +1,14 @@
-import React, { Component } from 'react'; 
+import React, { useContext } from 'react'; 
 import MainPage from './containers/MainPage';
+import { StateProvider } from './store'
 
-class App extends Component {
 
-  constructor() {
-    super()
-    this.state = {
-      defaultCoordinates: {
-        lat: 0,
-        long: 0,
-      },
-      isLoading: true,
-    }
-  }
-
-  componentDidMount() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        console.log(position);
-        this.setState({
-          defaultCoordinates: {
-            lat: position.coords.latitude,
-            long: position.coords.longitude,
-          },
-          isLoading: false,
-        })
-      });
-    }
-  }
-
-  render() {
-    return (
-      <>
-        {!this.state.isLoading && <MainPage coordinates={this.state.defaultCoordinates} />}
-      </>
-    );
-  }
-
+const App = () => {
+  return(
+    <StateProvider>
+      <MainPage />
+    </StateProvider>
+  )
 }
 
 export default App;
