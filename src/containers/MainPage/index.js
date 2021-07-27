@@ -39,8 +39,8 @@ const MainPage = (props) => {
 
     return(
         <>
-            {state.weatherData && <WeatherCard />}
             <WeatherSearch />
+            {state.weatherData && <WeatherCard />}
         </>
     )
     

@@ -43,7 +43,7 @@ export const getWeatherByCoordinates = async (coordinates) => {
     }
 }
 
-export const getForcastByCity = (city) => {
+export const getForcastByCity = async (city) => {
     const options = {
         method: 'GET',
         url: 'https://community-open-weather-map.p.rapidapi.com/forecast/daily',
@@ -54,9 +54,12 @@ export const getForcastByCity = (city) => {
         }
     };
 
-    axios.request(options).then((response) => {
-        console.log(response.data);
-    }).catch((error) => {
-        console.error(error);
-    });
+    let response = null;
+    try {
+        response = await axios.request(options);
+    } catch(error) {
+        response = error.response;
+    } finally {
+        return response;
+    }
 }
